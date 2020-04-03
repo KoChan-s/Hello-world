@@ -3,4 +3,4 @@
 
 Build:
 
-`cargo run`
+`cargo build --release`
