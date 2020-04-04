@@ -30,8 +30,8 @@ struct HelloWorld {
 }
 
 impl HelloWorld {
-    
-    fn new(h1: Hello, e1: Hello, l1: Hello, l2: Hello, o1: Hello, space: Hello, w1: Hello, o2: Hello, r1: Hello, l3: Hello, d1: Hello, exclamation_mark: Hello) -> Self {
+
+    pub fn new(h1: Hello, e1: Hello, l1: Hello, l2: Hello, o1: Hello, space: Hello, w1: Hello, o2: Hello, r1: Hello, l3: Hello, d1: Hello, exclamation_mark: Hello) -> Self {
         Self {
             h1,
             e1,
@@ -48,7 +48,7 @@ impl HelloWorld {
         }
     }
 
-    fn create_hello_world(&self) -> String {
+    pub fn create_hello_world(&self) -> String {
         let h1: u8 = self.world(&self.h1);
         let e1: u8 = self.world(&self.e1);
         let l1: u8 = self.world(&self.l1);
@@ -78,7 +78,7 @@ impl HelloWorld {
 
         convert_hello_world!(hello)
     }
-
+    
     fn world(&self, hello_: &Hello) -> u8 {
         match hello_ {
             Hello::H1(i) => *i,
@@ -101,7 +101,22 @@ impl HelloWorld {
 macro_rules! convert_hello_world {
     ($byte:expr) => {
         {
-            String::from_utf8($byte).unwrap()
+            let mut text: String = "".to_string();
+            for ch in $byte {
+                match ch {
+                    0b1001000 => text.push('H'),
+                    0b1100101 => text.push('e'),
+                    0b1101100 => text.push('l'),
+                    0b1101111 => text.push('o'),
+                    0b100000  => text.push(' '),
+                    0b1110111 => text.push('w'),
+                    0b1110010 => text.push('r'),
+                    0b1100100 => text.push('d'),
+                    0b100001  => text.push('!'),
+                    _ => ()
+                }
+            }
+            text
         }
     };
 }
@@ -112,42 +127,46 @@ macro_rules! print_hello_world {
         for sym in $hello.chars() {
             print!("{}", sym);
         }
-    };
-}
-
-#[macro_export]
-macro_rules! struct_hello_world {
-    () => {
-        {
-            let hello_world = HelloWorld::new(
-                Hello::H1(0b1001000),
-                Hello::E1(0b1100101),
-                Hello::L1(0b1101100),
-                Hello::L2(0b1101100),
-                Hello::O1(0b1101111),
-                Hello::Space(0b100000),
-                Hello::W1(0b1110111),
-                Hello::O2(0b1101111),
-                Hello::R1(0b1110010),
-                Hello::L3(0b1101100),
-                Hello::D1(0b1100100),
-                Hello::ExclamationMark(0b100001)
-            );
-
-            hello_world
-        }
+        print!("\n");
     };
 }
 
 #[test]
 fn test_hello_world() {
-    let hello_world = struct_hello_world!();
+    let hello_world = HelloWorld::new(
+        Hello::H1(0b1001000),
+        Hello::E1(0b1100101),
+        Hello::L1(0b1101100),
+        Hello::L2(0b1101100),
+        Hello::O1(0b1101111),
+        Hello::Space(0b100000),
+        Hello::W1(0b1110111),
+        Hello::O2(0b1101111),
+        Hello::R1(0b1110010),
+        Hello::L3(0b1101100),
+        Hello::D1(0b1100100),
+        Hello::ExclamationMark(0b100001)
+    );
+
     let hello = hello_world.create_hello_world();
     assert_eq!(hello, "Hello world!");
 }
 
 fn main() {
-    let hello_world = struct_hello_world!();
+    let hello_world = HelloWorld::new(
+        Hello::H1(0b1001000),
+        Hello::E1(0b1100101),
+        Hello::L1(0b1101100),
+        Hello::L2(0b1101100),
+        Hello::O1(0b1101111),
+        Hello::Space(0b100000),
+        Hello::W1(0b1110111),
+        Hello::O2(0b1101111),
+        Hello::R1(0b1110010),
+        Hello::L3(0b1101100),
+        Hello::D1(0b1100100),
+        Hello::ExclamationMark(0b100001)
+    );
 
     print_hello_world!(hello_world.create_hello_world());
 }
